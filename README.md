@@ -1,5 +1,5 @@
-CD LAB SEM 7 KTU ALL QUESTIONS
-C7A-(22-26)
+##CD LAB SEM 7 KTU ALL QUESTIONS
+C7A-(22-26)##
 
 - Design and implement a lexical analyzer for a given language using C. The lexical analyzer should ignore redundant spaces, tabs, and newlines.
 

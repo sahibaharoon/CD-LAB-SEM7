@@ -11,6 +11,9 @@ C7A-(22-26)
 
 - Write a program to minimize any given DFA. 🫡
 
+---
+
+
 - Write a Lex program to recognize all strings that **do not** contain the first four characters of your name as a substring. 🫡
 
 - Write a YACC program to recognize a valid variable:

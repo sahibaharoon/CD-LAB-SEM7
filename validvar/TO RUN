@@ -1,0 +1,4 @@
+bison -d var.y
+flex var.l
+gcc var.tab.c lex.yy.c -o varcheck -lfl
+./varcheck

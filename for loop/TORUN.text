@@ -1,0 +1,4 @@
+bison -d for.y
+flex for.l
+gcc for.tab.c lex.yy.c -o for_checker
+./for_checker

@@ -21,7 +21,7 @@
 
 - Implement a calculator using **LEX** and **YACC**. 🫡
 
-- Convert the BNF rules into YACC form and write code to generate an **Abstract Syntax Tree (AST)**.
+- Convert the BNF rules into YACC form and write code to generate an **Abstract Syntax Tree (AST)**.🫡
 
 - Write a YACC program to check the syntax of a **FOR** statement in C.🫡
 

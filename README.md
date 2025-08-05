@@ -23,7 +23,7 @@
 
 - Convert the BNF rules into YACC form and write code to generate an **Abstract Syntax Tree (AST)**.
 
-- Write a YACC program to check the syntax of a **FOR** statement in C.
+- Write a YACC program to check the syntax of a **FOR** statement in C.🫡
 
 ---
 

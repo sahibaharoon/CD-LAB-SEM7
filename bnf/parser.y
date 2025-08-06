@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // AST Node Structure
 typedef struct ASTNode {
@@ -12,6 +13,11 @@ typedef struct ASTNode {
 
 ASTNode* createNode(char* type, ASTNode* left, ASTNode* right, int value);
 void printAST(ASTNode* node, int indent);
+
+ASTNode* root; // Global AST root
+
+int yyerror(const char* s);
+int yylex(void);
 %}
 
 %union {
@@ -19,13 +25,18 @@ void printAST(ASTNode* node, int indent);
     struct ASTNode* ast;
 }
 
-%token NUMBER
+%token <num> NUMBER
 %left '+' '-'
 %left '*' '/'
 
 %type <ast> expr term factor
-
+%start input   // Set start symbol
 %%
+
+input:
+      /* empty */
+    | input expr '\n' { root = $2; printAST(root, 0); }
+    ;
 
 expr
     : expr '+' term    { $$ = createNode("+", $1, $3, 0); }
@@ -44,13 +55,12 @@ factor
     | NUMBER           { $$ = createNode("num", NULL, NULL, $1); }
     ;
 
-%%
 
-#include "lex.yy.c" // If using Flex
+%%
 
 ASTNode* createNode(char* type, ASTNode* left, ASTNode* right, int value) {
     ASTNode* node = (ASTNode*)malloc(sizeof(ASTNode));
-    node->type = type;
+    node->type = strdup(type); // safe string copy
     node->left = left;
     node->right = right;
     node->value = value;
@@ -60,7 +70,7 @@ ASTNode* createNode(char* type, ASTNode* left, ASTNode* right, int value) {
 void printAST(ASTNode* node, int indent) {
     if (!node) return;
     for (int i = 0; i < indent; i++) printf("  ");
-    if (node->type == "num")
+    if (strcmp(node->type, "num") == 0)
         printf("%s: %d\n", node->type, node->value);
     else
         printf("%s\n", node->type);
@@ -70,7 +80,9 @@ void printAST(ASTNode* node, int indent) {
 
 int main() {
     printf("Enter expression:\n");
-    yyparse();
+    if (yyparse() == 0) {
+        printAST(root, 0);
+    }
     return 0;
 }
 
@@ -78,3 +90,4 @@ int yyerror(const char* s) {
     fprintf(stderr, "Error: %s\n", s);
     return 0;
 }
+

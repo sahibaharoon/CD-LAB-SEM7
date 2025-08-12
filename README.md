@@ -29,7 +29,7 @@
 
 - Develop an **Operator Precedence Parser** for a given language.🫡
 
-- Write a program to simulate **First** and **Follow** sets for any given grammar.
+- Write a program to simulate **First** and **Follow** sets for any given grammar.🫡
 
 - Construct a **Recursive Descent Parser** for an expression.🫡
 

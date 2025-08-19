@@ -33,7 +33,7 @@
 
 - Construct a **Recursive Descent Parser** for an expression.🫡
 
-- Construct a **Shift-Reduce Parser** for a given language.
+- Construct a **Shift-Reduce Parser** for a given language.🫡
 
 ---
 

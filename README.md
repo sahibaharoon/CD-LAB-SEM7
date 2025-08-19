@@ -37,7 +37,7 @@
 
 ---
 
-- Implement **Intermediate Code Generation** for simple expressions.
+- Implement **Intermediate Code Generation** for simple expressions.🫡
 
 - Implement the **back-end** of the compiler which takes Three Address Code (TAC) and produces **8086 assembly language** instructions:
   - Target instructions can be simple: `MOV`, `ADD`, `SUB`, `JMP`, etc.

@@ -1,5 +1,5 @@
 %{
-   #include "example.tab.h" 
+   #include "while.tab.h" 
 %}
 
 %%

@@ -6,14 +6,10 @@
     }
     int yylex(void);
 %}
-%token DO ID PLUS MINUS NUMBER LPAR ASSIGN RPAR WHILE LT GT SEMI LBRA RBRA
+%token ID NUMBER LPAR RPAR WHILE LT GT
 %%
-expr: DO smt WHILE cond { printf("VALID DO WHILE LOOP");};
-smt: LBRA whattodo RBRA ;
-whattodo: ID ASSIGN code;
-code: ID PLUS NUMBER| NUMBER | ID MINUS NUMBER;
-cond:LPAR ope RPAR SEMI ;
-ope:  ID LT NUMBER|ID GT NUMBER;
+expr: WHILE LPAR cond RPAR { printf("VALID WHILE LOOP");};
+cond:ID LT NUMBER | ID GT NUMBER;
 
 %%
 int main(){

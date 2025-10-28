@@ -2,57 +2,74 @@
 #include <string.h>
 
 int main() {
-    char stack[50], ip[50], opt[10][10][2], ter[10];
-    int n, i, j, k, top = 0, row = 0, col = 0;
+    char stack[20], ip[20], opt[10][10][2], ter[10];
+    int type[20]; // 0 = operator, 1 = operand
+    int i, j, k, n, top = 0, col = -1, row = -1;
+    int first_shift_done = 0; // To track the very first shift
 
-    // Initialize
+    // Initialize arrays
+    for (i = 0; i < 20; i++) {
+        stack[i] = '\0';
+        type[i] = -1;
+    }
     for (i = 0; i < 10; i++)
         for (j = 0; j < 10; j++)
-            opt[i][j][0] = '\0';
+            strcpy(opt[i][j], " ");
 
-    printf("Enter number of terminals: ");
+    printf("Enter the number of terminals: ");
     scanf("%d", &n);
 
-    printf("Enter the terminals (as a single string): ");
+    printf("\nEnter the terminals (no spaces, e.g. +*i$): ");
     scanf("%s", ter);
 
     printf("\nEnter the operator precedence table values:\n");
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < n; i++)
         for (j = 0; j < n; j++) {
-            printf("Enter relation for %c %c: ", ter[i], ter[j]);
+            printf("Enter the value for (%c, %c): ", ter[i], ter[j]);
             scanf("%s", opt[i][j]);
         }
-    }
 
-    // Display the table
-    printf("\nOPERATOR PRECEDENCE TABLE:\n\t");
+    printf("\n--- OPERATOR PRECEDENCE TABLE ---\n\t");
     for (i = 0; i < n; i++) printf("%c\t", ter[i]);
-    printf("\n");
     for (i = 0; i < n; i++) {
-        printf("%c\t", ter[i]);
-        for (j = 0; j < n; j++)
-            printf("%c\t", opt[i][j][0] ? opt[i][j][0] : '-');
-        printf("\n");
+        printf("\n%c\t", ter[i]);
+        for (j = 0; j < n; j++) printf("%c\t", opt[i][j][0]);
     }
 
-    // Start parsing
-    stack[0] = '$';
-    stack[1] = '\0';
+    // Initialize stack
+    stack[top] = '$';
+    type[top] = 0; // $ is operator
 
-    printf("\nEnter input string (end with $): ");
+    printf("\n\nEnter the input string (end with $): ");
     scanf("%s", ip);
 
     i = 0;
-    printf("\n%-15s %-15s %-10s\n", "STACK", "INPUT", "ACTION");
-    printf("---------------------------------------------\n");
+    printf("\nSTACK\t\tINPUT STRING\t\tACTION\n");
+    for (k = 0; k <= top; k++) printf("%c", stack[k]);
+    printf("\t\t");
+    for (k = i; k < strlen(ip); k++) printf("%c", ip[k]);
+    printf("\t\t");
 
     while (1) {
-        printf("%-15s %-15s ", stack, &ip[i]);
+        col = row = -1;
 
-        // Find row, col
+        // Find column and row in table
         for (k = 0; k < n; k++) {
-            if (stack[top] == ter[k]) row = k;
-            if (ip[i] == ter[k]) col = k;
+            if (stack[top] == ter[k]) col = k;
+            if (ip[i] == ter[k]) row = k;
+        }
+
+        if (col == -1 || row == -1) {
+            printf("Reject (invalid symbol)\n");
+            break;
+        }
+
+        char action = opt[col][row][0];
+
+        // Reject if the very first symbol is not an operand
+        if (!first_shift_done && ip[i] != 'i') {
+            printf("Reject (expression cannot start with operator)\n");
+            break;
         }
 
         // Accept condition
@@ -61,26 +78,54 @@ int main() {
             break;
         }
 
-        char relation = opt[row][col][0];
-
-        if (relation == '<' || relation == '=') {
+        // Shift
+        if (action == '<' || action == '=') {
             stack[++top] = ip[i];
-            stack[top + 1] = '\0';
-            printf("Shift %c\n", ip[i]);
+            type[top] = (ip[i] == 'i') ? 1 : 0; // mark operand/operator
+            first_shift_done = 1; // First operand shifted
+            printf("Shift\n");
             i++;
-        } else if (relation == '>') {
-            // Find the nearest < in stack
-            int t = top - 1;
-            while (t >= 0 && stack[t] != '<' && stack[t] != '$')
-                t--;
-            if (t >= 0)
-                top = t; // reduce to this point
-            stack[top + 1] = '\0';
+        }
+        // Reduce
+        else if (action == '>') {
+            if (top < 1) {
+                printf("Reject (invalid reduction)\n");
+                break;
+            }
+
+            // Find the start of reduction
+            int t = top;
+            while (t > 0 && stack[t] != '<') t--;
+            int start = (t == 0) ? 1 : t + 1;
+
+            // Check for consecutive operands/operators in reduction zone
+            int invalid = 0;
+            for (int x = start; x <= top; x++) {
+                if (x > start && type[x] == type[x - 1]) {
+                    invalid = 1;
+                    break;
+                }
+            }
+            if (invalid) {
+                printf("Reject (invalid operator/operand sequence)\n");
+                break;
+            }
+
+            // Pop stack until '<'
+            while (top > 0 && stack[top] != '<') top--;
+            if (top > 0) top--; // pop '<'
             printf("Reduce\n");
-        } else {
-            printf("Reject\n");
+        }
+        else {
+            printf("Reject (invalid table entry)\n");
             break;
         }
+
+        // Print stack and input
+        for (k = 0; k <= top; k++) printf("%c", stack[k]);
+        printf("\t\t");
+        for (k = i; k < strlen(ip); k++) printf("%c", ip[k]);
+        printf("\t\t");
     }
 
     return 0;

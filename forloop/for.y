@@ -3,66 +3,54 @@
 #include <stdlib.h>
 
 int yylex(void);
-void yyerror(const char *s) { printf("Syntax Error: %s\n", s); exit(1); }
-
+void yyerror(const char *s);
 %}
 
-%token ID NUM FOR LE GE EQ NE OR AND INCR DECR
-%right '='
-%left OR AND
-%left '>' '<' LE GE EQ NE
-%left '+' '-'
-%left '*' '/'
-%right UMINUS
-%left '!'
-
-
+%token ID NUMBER FOR OPREL INC DEC
 
 %%
 
-S       : ST { printf("Input accepted\n"); exit(0); } ;
+stmt:
+    FOR '(' expr_stmt expr_stmt expr ')' block { printf("Valid FOR loop syntax\n"); }
+    ;
 
-ST      : FOR '(' E ';' E ';' E ')' DEF ;
+expr_stmt:
+    expr ';'
+    ;
 
-DEF     : '{' BODY '}'
-        | E ';'
-        | ST
-        | 
-        ;
+expr:
+    ID '=' expr
+    | ID OPREL expr
+    | ID
+    | NUMBER
+    | expr '+' expr
+    | expr '-' expr
+    | expr '*' expr
+    | expr '/' expr
+    | INC ID
+    | ID INC
+    | DEC ID
+    | ID DEC
+    ;
 
-BODY    : BODY BODY
-        | E ';'
-        | ST
-        | 
-        ;
+block:
+    '{' '}'
+    | '{' stmt_list '}'
+    ;
 
-E       : ID '=' E
-        | E '+' E
-        | E '-' E
-        | E '*' E
-        | E '/' E
-        | E '<' E
-        | E '>' E
-        | E LE E
-        | E GE E
-        | E EQ E
-        | E NE E
-        | E OR E
-        | E AND E
-         | ID INCR
-  | ID DECR
-        | NUM
-        | ID
-        ;
-
+stmt_list:
+    stmt
+    | stmt_list stmt
+    ;
 
 %%
 
-
+void yyerror(const char *s) {
+    printf("Syntax Error: %s\n", s);
+}
 
 int main() {
-    printf("Enter a for loop:\n");
+    printf("Enter a FOR loop:\n");
     yyparse();
     return 0;
 }
-

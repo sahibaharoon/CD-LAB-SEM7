@@ -1,39 +1,33 @@
 %{
 #include "for.tab.h"
-int yylex(void);
-void yyerror(const char *s);
 %}
 
-alpha   [A-Za-z]
-digit   [0-9]
-
 %%
 
-[ \t\n]+                  ;  // Ignore whitespace
-for                       return FOR;
-{digit}+                  return NUM;
-{alpha}({alpha}|{digit})* return ID;
-"<="                       return LE;
-">="                       return GE;
-"++"            			return INCR;
-"--"            			return DECR;
-"=="                       return EQ;
-"!="                       return NE;
-"||"                       return OR;
-"&&"                       return AND;
-"="                        return '=';
-"<"                        return '<';
-">"                        return '>';
-"\\+"                       return '+';
-"-"                        return '-';
-"\\*"                       return '*';
-"/"                        return '/';
-"\\("                       return '(';
-"\\)"                       return ')';
-"\\{"                       return '{';
-"\\}"                       return '}';
-";"                        return ';';
-.                          return yytext[0];
+"for"       { return FOR; }
+"++"        { return INC; }
+"--"        { return DEC; }
+"=="|"<="|">="|"!="|"<"|">"  { return OPREL; }
+
+[0-9]+      { yylval = atoi(yytext); return NUMBER; }
+[a-zA-Z_][a-zA-Z0-9_]*   { return ID; }
+
+"="         { return '='; }
+";"         { return ';'; }
+"("         { return '('; }
+")"         { return ')'; }
+"{"         { return '{'; }
+"}"         { return '}'; }
+"+"         { return '+'; }
+"-"         { return '-'; }
+"*"         { return '*'; }
+"/"         { return '/'; }
+
+[ \t\n]+    ;  // skip whitespace
+
+.           { return yytext[0]; }
 
 %%
-
+int yywrap(){
+    return 1;
+}
